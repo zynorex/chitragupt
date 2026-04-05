@@ -242,79 +242,127 @@ function useScrollReveal() {
 
 function Navbar({ loaded }: { loaded?: boolean }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b-[3px] border-black">
+    <nav className={`fixed z-[100] w-full transition-all duration-300 ${scrolled ? 'top-2 sm:top-4' : 'top-4 sm:top-8'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <a href="#" className="flex items-center gap-3">
-            <SkeletonWrap loaded={loaded ?? true} className="w-10 h-10">
-              <div className="w-10 h-10 bg-golden border-[3px] border-black rounded-[4px] shadow-[3px_3px_0px_#1A1A1A] flex items-center justify-center hover-glitch">
-                <span className="font-[var(--font-mono)] font-bold text-lg text-black">C</span>
-              </div>
+        <div className={`
+          relative flex items-center justify-between h-16 sm:h-20 px-4 sm:px-6 
+          bg-white border-[3px] border-black transition-all duration-300
+          ${scrolled ? 'shadow-[4px_4px_0px_#1A1A1A] sm:shadow-[6px_6px_0px_#1A1A1A] translate-y-0' : 'shadow-[8px_8px_0px_#1A1A1A] sm:shadow-[12px_12px_0px_#FFD93D] -translate-y-1'}
+        `}>
+          {/* Logo Section */}
+          <div className="flex items-center gap-4">
+            <SkeletonWrap loaded={loaded ?? true} className="w-10 h-10 sm:w-12 sm:h-12">
+              <a href="#" className="relative group block">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-coral border-[3px] border-black shadow-[2px_2px_0px_#1A1A1A] flex items-center justify-center group-hover:bg-golden transition-colors group-hover:translate-x-[2px] group-hover:translate-y-[2px] group-hover:shadow-none ease-out">
+                  <span className="font-[var(--font-mono)] font-bold text-xl sm:text-2xl text-white group-hover:text-black">C</span>
+                </div>
+                {/* Decoration cross */}
+                <div className="absolute -top-2 -left-2 text-black/20 text-xs font-[var(--font-mono)] font-bold opacity-0 group-hover:opacity-100 transition-opacity">+</div>
+              </a>
             </SkeletonWrap>
-            <SkeletonWrap loaded={loaded ?? true} className="w-32 h-6">
-              <span className="font-[var(--font-display)] font-bold text-xl tracking-tight hidden sm:block">CHITRAGUPT</span>
-            </SkeletonWrap>
-          </a>
+            <div className="hidden sm:flex flex-col">
+              <SkeletonWrap loaded={loaded ?? true} className="w-32 h-6">
+                <span className="font-[var(--font-display)] font-extrabold text-xl tracking-tight leading-none uppercase">Chitragupt</span>
+              </SkeletonWrap>
+              <SkeletonWrap loaded={loaded ?? true} className="w-24 h-4 mt-1">
+                <span className="font-[var(--font-mono)] text-[0.6rem] font-bold text-gray uppercase tracking-[0.2em]">Protocol V1.0</span>
+              </SkeletonWrap>
+            </div>
+          </div>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-1">
-            {["Features", "How It Works", "Terminology"].map((item, index) => (
-              <SkeletonWrap key={item} loaded={loaded ?? true} className="w-24 h-8 mx-1">
+          {/* Desktop Links (Center) */}
+          <div className="hidden lg:flex items-center gap-1">
+            {["FEATURES", "HOW IT WORKS", "SHABD KOSH"].map((item) => (
+              <SkeletonWrap key={item} loaded={loaded ?? true} className="w-24 h-10 mx-1">
                 <a
                   href={`#${item.toLowerCase().replace(/ /g, "-")}`}
-                  className="brutal-link px-4 py-2 text-sm font-semibold text-black hover:bg-golden/30 rounded-[4px] transition-colors"
+                  className="relative px-3 py-2 text-sm font-bold font-[var(--font-mono)] text-charcoal tracking-wide group overflow-hidden inline-flex items-center justify-center"
                 >
-                  {item}
+                  <span className="relative z-10 group-hover:text-black transition-colors">{item}</span>
+                  <span className="absolute bottom-1 left-3 right-3 h-[3px] bg-black transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300 ease-out" />
+                  <span className="absolute inset-0 bg-golden/20 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 -z-0 rounded-[2px]" />
                 </a>
               </SkeletonWrap>
             ))}
           </div>
 
-          {/* CTA + Mobile Toggle */}
-          <div className="flex items-center gap-3">
-            <SkeletonWrap loaded={loaded ?? true} className="w-36 h-10">
-              <a href="#submit" className="brutal-btn brutal-btn-primary text-sm py-2 px-5 hidden sm:inline-flex">
-                Submit Evidence
-              </a>
-            </SkeletonWrap>
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden w-10 h-10 border-[3px] border-black rounded-[4px] flex items-center justify-center bg-white shadow-[3px_3px_0px_#1A1A1A] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all"
-              aria-label="Toggle menu"
-            >
-              {mobileOpen ? <CloseIcon /> : <MenuIcon />}
-            </button>
+          {/* Right Section (Status + CTA) */}
+          <div className="flex items-center gap-4">
+             {/* Status Pulse - Only Desktop */}
+             <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 border-2 border-black/20 bg-ivory mr-2 hover:border-coral transition-colors cursor-default group">
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-coral opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-coral border border-black group-hover:bg-golden transition-colors"></span>
+                </span>
+                <span className="font-[var(--font-mono)] text-[0.65rem] font-bold text-gray group-hover:text-black transition-colors lowercase tracking-wider">&gt; network_secure</span>
+             </div>
+
+             {/* Desktop Action Button */}
+             <SkeletonWrap loaded={loaded ?? true} className="w-24 sm:w-40 h-10 sm:h-12 hidden sm:block">
+               <a href="#submit" className="brutal-btn brutal-btn-primary px-6 h-10 sm:h-12 items-center justify-center text-sm font-bold font-[var(--font-mono)] tracking-wider w-full text-center">
+                 OPEN VAULT
+               </a>
+             </SkeletonWrap>
+
+             {/* Mobile Menu Button */}
+             <button
+               onClick={() => setMobileOpen(!mobileOpen)}
+               className="lg:hidden w-10 h-10 sm:w-12 sm:h-12 border-[3px] border-black flex items-center justify-center bg-cyan shadow-[3px_3px_0px_#1A1A1A] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all relative overflow-hidden group"
+               aria-expanded={mobileOpen}
+               aria-label="Toggle Navigation"
+             >
+               <span className="absolute inset-0 bg-white transform translate-y-full group-hover:translate-y-0 transition-transform" />
+               <div className="relative z-10 text-black">
+                 {mobileOpen ? <CloseIcon /> : <MenuIcon />}
+               </div>
+             </button>
           </div>
         </div>
-      </div>
 
-      {/* Mobile Menu */}
-      {mobileOpen && (
-        <div className="md:hidden border-t-[3px] border-black bg-white">
-          <div className="px-4 py-4 flex flex-col gap-2">
-            {["Features", "How It Works", "Terminology"].map((item) => (
+        {/* Mobile Dropdown Panel */}
+        <div className={`
+          lg:hidden absolute top-full left-4 right-4 mt-3 border-[3px] border-black bg-ivory shadow-[6px_6px_0px_#1A1A1A]
+          transition-all duration-400 ease-[cubic-bezier(0.76,0,0.24,1)] origin-top overflow-hidden
+          ${mobileOpen ? 'max-h-[500px] opacity-100 scale-y-100 translate-y-0' : 'max-h-0 opacity-0 scale-y-0 -translate-y-4'}
+        `}>
+          <div className="p-5 flex flex-col gap-3">
+             <div className="text-[0.6rem] font-[var(--font-mono)] text-gray uppercase tracking-widest font-bold mb-2">Navigation Log</div>
+            {["FEATURES", "HOW IT WORKS", "SHABD KOSH"].map((item) => (
               <a
                 key={item}
                 href={`#${item.toLowerCase().replace(/ /g, "-")}`}
                 onClick={() => setMobileOpen(false)}
-                className="px-4 py-3 text-base font-semibold border-[3px] border-black rounded-[4px] bg-ivory shadow-[3px_3px_0px_#1A1A1A] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all"
+                className="block px-4 py-3 text-base font-bold font-[var(--font-mono)] text-black tracking-widest border-[3px] border-transparent hover:border-black hover:bg-golden hover:translate-x-2 transition-all uppercase"
               >
-                {item}
+                <span className="text-coral mr-2">&gt;</span> {item}
               </a>
             ))}
-            <a
-              href="#submit"
-              onClick={() => setMobileOpen(false)}
-              className="brutal-btn brutal-btn-primary w-full text-center mt-2"
-            >
-              Submit Evidence
-            </a>
+            <div className="border-t-[3px] border-black/20 pt-5 mt-2">
+              <a href="#submit" onClick={() => setMobileOpen(false)} className="brutal-btn brutal-btn-dark w-full justify-center py-4 text-sm font-bold font-[var(--font-mono)]">
+                SUBMIT EVIDENCE
+              </a>
+            </div>
+            {/* Mobile Network Status */}
+            <div className="flex items-center gap-3 mt-4 px-2 py-2 bg-white border-2 border-black/10">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan"></span>
+                </span>
+                <span className="font-[var(--font-mono)] text-[0.65rem] font-bold text-gray uppercase tracking-wider">Polyon Amoy Active</span>
+             </div>
           </div>
         </div>
-      )}
+
+      </div>
     </nav>
   );
 }
