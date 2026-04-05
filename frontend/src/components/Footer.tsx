@@ -33,10 +33,10 @@ export default function Footer() {
 
             {/* Social / Open Source Links */}
             <div className="flex gap-4 mt-4">
-              <a href="#" className="w-14 h-14 bg-black border-2 border-white/20 flex items-center justify-center hover:border-coral hover:bg-coral hover:text-black transition-all group shadow-[4px_4px_0_rgba(255,255,255,0.1)] hover:shadow-none hover:translate-y-1 hover:translate-x-1">
+              <a href="https://github.com/zynorex/chitragupt" target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-black border-2 border-white/20 flex items-center justify-center hover:border-coral hover:bg-coral hover:text-black transition-all group shadow-[4px_4px_0_rgba(255,255,255,0.1)] hover:shadow-none hover:translate-y-1 hover:translate-x-1">
                 <span className="font-[var(--font-mono)] font-bold text-lg text-white group-hover:text-black">GH</span>
               </a>
-              <a href="#" className="w-14 h-14 bg-black border-2 border-white/20 flex items-center justify-center hover:border-cyan hover:bg-cyan hover:text-black transition-all group shadow-[4px_4px_0_rgba(255,255,255,0.1)] hover:shadow-none hover:translate-y-1 hover:translate-x-1">
+              <a href="https://x.com/ayusheith" target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-black border-2 border-white/20 flex items-center justify-center hover:border-cyan hover:bg-cyan hover:text-black transition-all group shadow-[4px_4px_0_rgba(255,255,255,0.1)] hover:shadow-none hover:translate-y-1 hover:translate-x-1">
                 <span className="font-[var(--font-mono)] font-bold text-lg text-white group-hover:text-black">X</span>
               </a>
               <a href="https://github.com/zynorex/chitragupt" target="_blank" rel="noopener noreferrer" className="px-6 h-14 bg-black border-2 border-white/20 flex items-center justify-center hover:border-golden hover:bg-golden hover:text-black transition-all group shadow-[4px_4px_0_rgba(255,255,255,0.1)] hover:shadow-none hover:translate-y-1 hover:translate-x-1">
