@@ -209,84 +209,10 @@ function ScrambleText({ text, className = "", delayMs = 0 }: { text: string, cla
   );
 }
 
-// Global Splash Screen Vault Loader
-function VaultSplashLoader({ onComplete }: { onComplete: () => void }) {
-  const [progress, setProgress] = useState(0);
-  const [phase, setPhase] = useState(0);
-  const [hashes, setHashes] = useState<string[]>([]);
-  const [visible, setVisible] = useState(true);
-  const [unmount, setUnmount] = useState(false);
-
-  useEffect(() => {
-    // Terminal background noise
-    const interval = setInterval(() => {
-       if (phase < 2) {
-          setHashes(Array(20).fill(0).map(() => 
-            Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-          ));
-       }
-    }, 70);
-
-    // Progress Simulation
-    let p = 0;
-    const pTimer = setInterval(() => {
-      p += Math.floor(Math.random() * 10) + 2; // Incremental chunks
-      if (p >= 100) {
-        p = 100;
-        clearInterval(pTimer);
-        setPhase(1); 
-        setTimeout(() => setPhase(2), 500); 
-        setTimeout(() => {
-          setVisible(false); // Triggers slide up
-          setTimeout(() => {
-            setUnmount(true);
-            onComplete();
-          }, 800); // Wait for CSS transform to finish
-        }, 1200);
-      }
-      setProgress(p);
-    }, 120);
-
-    return () => {
-      clearInterval(interval);
-      clearInterval(pTimer);
-    }
-  }, [phase, onComplete]);
-
-  if (unmount) return null;
-
-  return (
-    <div className={`fixed inset-0 z-[1000] bg-black text-golden flex flex-col items-center justify-center font-[var(--font-mono)] transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] ${!visible ? '-translate-y-full' : 'translate-y-0'}`}>
-      
-      {/* Background terminal noise */}
-      <div className="absolute inset-0 overflow-hidden opacity-10 text-[0.65rem] break-all leading-tight pointer-events-none p-4 select-none flex flex-wrap gap-1">
-         {hashes.map((h, i) => <span key={i} className={i % 3 === 0 ? "text-coral" : ""}>{h}</span>)}
-      </div>
-
-      <div className="relative z-10 w-full max-w-3xl px-6 flex flex-col gap-8">
-         <div className="flex justify-between items-end border-b-[4px] border-golden pb-3">
-            <h2 className="text-2xl sm:text-4xl font-bold uppercase tracking-widest text-white">Chitragupt Protocol</h2>
-            <span className="text-xl sm:text-3xl font-bold text-coral">{progress}%</span>
-         </div>
-         
-         {/* Brutal Progress Bar */}
-         <div className="w-full h-16 border-[4px] border-golden p-1.5 relative overflow-hidden bg-black shadow-[8px_8px_0px_#FFD93D]">
-            <div className="h-full bg-golden transition-all duration-75 ease-out shadow-[inset_-4px_0_0_#FF6B6B]" style={{ width: `${progress}%` }} />
-            {/* Glitch overlay on bar */}
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIi8+PC9zdmc+')] mix-blend-overlay pointer-events-none" />
-         </div>
-
-         <div className="flex flex-col gap-3 text-sm sm:text-base font-bold uppercase h-32">
-            {phase === 0 && <p className="animate-pulse text-white">&gt; Establishing secure connection via Tor network...</p>}
-            {phase === 0 && progress > 25 && <p className="animate-pulse text-cyan">&gt; Generating Shamir Secret variables...</p>}
-            {phase === 0 && progress > 55 && <p className="animate-pulse text-golden">&gt; Interfacing with Polygon Amoy Testnet...</p>}
-            {phase === 0 && progress > 80 && <p className="animate-pulse text-white">&gt; Verifying cryptographic signatures...</p>}
-            {phase >= 1 && <p className="text-coral">&gt; Handshake complete. Decrypting main vault interface.</p>}
-            {phase === 2 && <p className="text-golden text-2xl mt-4 animate-pulse-ring w-fit px-4 py-2 border-2 border-golden">&gt; ACCESS GRANTED_</p>}
-         </div>
-      </div>
-    </div>
-  );
+// Skeleton wrapper component
+function SkeletonWrap({ loaded, children, className = "" }: { loaded: boolean, children: React.ReactNode, className?: string }) {
+  if (loaded) return <>{children}</>;
+  return <div className={`brutal-skeleton inline-block rounded-[2px] ${className}`} />;
 }
 
 /* ──────────── HOOKS ──────────── */
@@ -314,7 +240,7 @@ function useScrollReveal() {
 
 /* ──────────── COMPONENTS ──────────── */
 
-function Navbar() {
+function Navbar({ loaded }: { loaded?: boolean }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -323,30 +249,37 @@ function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <a href="#" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-golden border-[3px] border-black rounded-[4px] shadow-[3px_3px_0px_#1A1A1A] flex items-center justify-center hover-glitch">
-              <span className="font-[var(--font-mono)] font-bold text-lg text-black">C</span>
-            </div>
-            <span className="font-[var(--font-display)] font-bold text-xl tracking-tight hidden sm:block">CHITRAGUPT</span>
+            <SkeletonWrap loaded={loaded ?? true} className="w-10 h-10">
+              <div className="w-10 h-10 bg-golden border-[3px] border-black rounded-[4px] shadow-[3px_3px_0px_#1A1A1A] flex items-center justify-center hover-glitch">
+                <span className="font-[var(--font-mono)] font-bold text-lg text-black">C</span>
+              </div>
+            </SkeletonWrap>
+            <SkeletonWrap loaded={loaded ?? true} className="w-32 h-6">
+              <span className="font-[var(--font-display)] font-bold text-xl tracking-tight hidden sm:block">CHITRAGUPT</span>
+            </SkeletonWrap>
           </a>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">
-            {["Features", "How It Works", "Terminology"].map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase().replace(/ /g, "-")}`}
-                className="brutal-link px-4 py-2 text-sm font-semibold text-black hover:bg-golden/30 rounded-[4px] transition-colors"
-              >
-                {item}
-              </a>
+            {["Features", "How It Works", "Terminology"].map((item, index) => (
+              <SkeletonWrap key={item} loaded={loaded ?? true} className="w-24 h-8 mx-1">
+                <a
+                  href={`#${item.toLowerCase().replace(/ /g, "-")}`}
+                  className="brutal-link px-4 py-2 text-sm font-semibold text-black hover:bg-golden/30 rounded-[4px] transition-colors"
+                >
+                  {item}
+                </a>
+              </SkeletonWrap>
             ))}
           </div>
 
           {/* CTA + Mobile Toggle */}
           <div className="flex items-center gap-3">
-            <a href="#submit" className="brutal-btn brutal-btn-primary text-sm py-2 px-5 hidden sm:inline-flex">
-              Submit Evidence
-            </a>
+            <SkeletonWrap loaded={loaded ?? true} className="w-36 h-10">
+              <a href="#submit" className="brutal-btn brutal-btn-primary text-sm py-2 px-5 hidden sm:inline-flex">
+                Submit Evidence
+              </a>
+            </SkeletonWrap>
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="md:hidden w-10 h-10 border-[3px] border-black rounded-[4px] flex items-center justify-center bg-white shadow-[3px_3px_0px_#1A1A1A] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all"
@@ -400,63 +333,79 @@ function HeroSection({ loaded }: { loaded: boolean }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full reveal-on-scroll">
         <div className="flex flex-col items-center text-center">
           {/* Badge */}
-          <div className="brutal-badge bg-white mb-8 hover:bg-ivory transition-colors cursor-default transform hover:-rotate-2">
-            <span className="w-2 h-2 bg-coral rounded-full animate-pulse" />
-            Decentralized &bull; Censorship Proof &bull; Unstoppable
-          </div>
+          <SkeletonWrap loaded={loaded} className="w-72 h-8 mb-8">
+            <div className="brutal-badge bg-white hover:bg-ivory transition-colors cursor-default transform hover:-rotate-2">
+              <span className="w-2 h-2 bg-coral rounded-full animate-pulse" />
+              Decentralized &bull; Censorship Proof &bull; Unstoppable
+            </div>
+          </SkeletonWrap>
 
           {/* Main Headline */}
-          <h1 className="font-[var(--font-display)] text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight max-w-5xl hover-glitch transition-all">
-            {loaded ? <ScrambleText text="Truth Cannot Be " delayMs={200} /> : "█████ ██████ ██ "}
-            <span className="relative inline-block">
-              <span className="relative z-10">
-                 {loaded ? <ScrambleText text="Deleted" delayMs={600} /> : "███████"}
+          <SkeletonWrap loaded={loaded} className="w-full max-w-4xl h-20 sm:h-24 md:h-32 mb-8 mt-2">
+            <h1 className="font-[var(--font-display)] text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight max-w-5xl hover-glitch transition-all">
+              <ScrambleText text="Truth Cannot Be " delayMs={200} />
+              <span className="relative inline-block">
+                <span className="relative z-10">
+                   <ScrambleText text="Deleted." delayMs={600} />
+                </span>
+                <span className={`absolute bottom-1 left-0 w-full h-4 md:h-5 bg-coral/60 -z-0 transform -skew-x-12 transition-all duration-1000 ${loaded ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'}`} />
               </span>
-              <span className={`absolute bottom-1 left-0 w-full h-4 md:h-5 bg-coral/60 -z-0 transform -skew-x-12 transition-all duration-1000 ${loaded ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'}`} />
-            </span>
-          </h1>
+            </h1>
+          </SkeletonWrap>
 
           {/* Sanskrit Subline */}
-          <p className="mt-8 font-[var(--font-mono)] text-lg md:text-xl text-charcoal/80 max-w-2xl bg-white px-4 py-2 border-2 border-black inline-block transform rotate-1 shadow-[2px_2px_0px_#1A1A1A]">
-            {loaded ? <ScrambleText text="सत्यम् एव जयते — Truth alone triumphs" delayMs={1000} /> : "██████████████████████████████"}
-          </p>
+          <SkeletonWrap loaded={loaded} className="w-full max-w-md h-12 mb-8">
+            <p className="font-[var(--font-mono)] text-lg md:text-xl text-charcoal/80 max-w-2xl bg-white px-4 py-2 border-2 border-black inline-block transform rotate-1 shadow-[2px_2px_0px_#1A1A1A]">
+              <ScrambleText text="सत्यम् एव जयते — Truth alone triumphs" delayMs={1000} />
+            </p>
+          </SkeletonWrap>
 
           {/* Description */}
-          <p className="mt-8 text-base md:text-lg text-gray max-w-2xl leading-relaxed font-semibold min-h-[80px]">
-            {loaded && <ScrambleText text="Upload encrypted evidence that gets sharded across a guardian network and stored permanently on chain. If you go silent, the dead man switch ensures your truth is released automatically." delayMs={1400} />}
-          </p>
+          <SkeletonWrap loaded={loaded} className="w-full max-w-2xl h-20 mb-4 mt-4">
+            <p className="text-base md:text-lg text-gray max-w-2xl leading-relaxed font-semibold min-h-[80px]">
+              {loaded && <ScrambleText text="Upload encrypted evidence that gets sharded across a guardian network and stored permanently on chain. If you go silent, the dead man switch ensures your truth is released automatically." delayMs={1400} />}
+            </p>
+          </SkeletonWrap>
 
           {/* CTA Buttons */}
-          <div className={`mt-12 flex flex-col sm:flex-row items-center gap-6 transition-all duration-1000 transform ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <a href="#submit" className="brutal-btn brutal-btn-dark text-base py-4 px-8 group">
-              Submit Evidence
-              <ArrowRightIcon className="group-hover:translate-x-1 transition-transform" />
-            </a>
-            <a href="#how-it-works" className="brutal-btn brutal-btn-white text-base py-4 px-8 group">
-              How It Works
-              <ChevronDownIcon className="group-hover:translate-y-1 transition-transform" />
-            </a>
+          <div className="mt-8 flex flex-col sm:flex-row items-center gap-6">
+            <SkeletonWrap loaded={loaded} className="w-56 h-14">
+              <a href="#submit" className="brutal-btn brutal-btn-dark text-base py-4 px-8 group">
+                Submit Evidence
+                <ArrowRightIcon className="group-hover:translate-x-1 transition-transform" />
+              </a>
+            </SkeletonWrap>
+            <SkeletonWrap loaded={loaded} className="w-56 h-14">
+              <a href="#how-it-works" className="brutal-btn brutal-btn-white text-base py-4 px-8 group">
+                How It Works
+                <ChevronDownIcon className="group-hover:translate-y-1 transition-transform" />
+              </a>
+            </SkeletonWrap>
           </div>
 
           {/* Stats Bar */}
-          <div className={`mt-20 w-full max-w-4xl brutal-card px-4 py-6 sm:px-8 sm:py-8 bg-white hover:bg-ivory transition-all duration-1000 transform delay-700 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x-[3px] md:divide-black">
-              {[
-                { value: "AES 256", label: "Encryption" },
-                { value: "5 of 3", label: "Shard Threshold" },
-                { value: "IPFS+AR", label: "Dual Storage" },
-                { value: "72h", label: "Default Interval" },
-              ].map((stat, idx) => (
-                <div key={stat.label} className="flex flex-col items-center px-4 group cursor-default" style={{ animationDelay: `${idx * 100}ms` }}>
-                  <span className="font-[var(--font-mono)] text-2xl sm:text-3xl font-bold text-black group-hover:text-coral transition-colors">
-                    {stat.value}
-                  </span>
-                  <span className="text-xs sm:text-sm text-gray mt-2 uppercase tracking-widest font-bold group-hover:text-black transition-colors">
-                    {stat.label}
-                  </span>
+          <div className={`mt-20 w-full max-w-4xl transition-all duration-1000 transform delay-700 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-100'}`}>
+             <SkeletonWrap loaded={loaded} className="w-full h-32">
+                <div className="brutal-card px-4 py-6 sm:px-8 sm:py-8 bg-white hover:bg-ivory">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x-[3px] md:divide-black">
+                    {[
+                      { value: "AES 256", label: "Encryption" },
+                      { value: "5 of 3", label: "Shard Threshold" },
+                      { value: "IPFS+AR", label: "Dual Storage" },
+                      { value: "72h", label: "Default Interval" },
+                    ].map((stat, idx) => (
+                      <div key={stat.label} className="flex flex-col items-center px-4 group cursor-default" style={{ animationDelay: `${idx * 100}ms` }}>
+                        <span className="font-[var(--font-mono)] text-2xl sm:text-3xl font-bold text-black group-hover:text-coral transition-colors">
+                          {stat.value}
+                        </span>
+                        <span className="text-xs sm:text-sm text-gray mt-2 uppercase tracking-widest font-bold group-hover:text-black transition-colors">
+                          {stat.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
-            </div>
+             </SkeletonWrap>
           </div>
         </div>
       </div>
@@ -722,27 +671,30 @@ export default function Home() {
 
   useEffect(() => {
     setMounted(true);
+    
+    // Simulate loading for the Skeleton blocks
+    const timer = setTimeout(() => {
+      setAppLoaded(true);
+    }, 1800);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   if (!mounted) return null;
 
   return (
-    <>
-      <VaultSplashLoader onComplete={() => setAppLoaded(true)} />
-      
-      <div className={`flex flex-col min-h-screen transition-opacity duration-1000 ${appLoaded ? 'opacity-100' : 'opacity-0'}`}>
-        <Navbar />
-        <main className="flex-1 overflow-hidden">
-          <HeroSection loaded={appLoaded} />
-          <MarqueeStrip />
-          <FeaturesSection />
-          <HowItWorksSection />
-          <TerminologySection />
-          <MarqueeStrip />
-          <CTASection />
-        </main>
-        <Footer />
-      </div>
-    </>
+    <div className={`flex flex-col min-h-screen transition-opacity duration-1000 opacity-100`}>
+      <Navbar loaded={appLoaded} />
+      <main className="flex-1 overflow-hidden">
+        <HeroSection loaded={appLoaded} />
+        <MarqueeStrip />
+        <FeaturesSection />
+        <HowItWorksSection />
+        <TerminologySection />
+        <MarqueeStrip />
+        <CTASection />
+      </main>
+      <Footer />
+    </div>
   );
 }
