@@ -1,213 +1,289 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-/* ──────────── ICONS (inline SVGs) ──────────── */
+/* ──────────── ICONS ──────────── */
+const MenuIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter">
+    <path d="M4 6h16M4 12h16M4 18h16" />
+  </svg>
+);
 
-function ShieldIcon({ className = "w-8 h-8" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-    </svg>
-  );
-}
+const CloseIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter">
+    <path d="M18 6L6 18M6 6l12 12" />
+  </svg>
+);
 
-function LockIcon({ className = "w-8 h-8" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-    </svg>
-  );
-}
+const ArrowRightIcon = ({ className = "" }) => (
+  <svg className={`w-5 h-5 ${className}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter">
+    <path d="M5 12h14M12 5l7 7-7 7" />
+  </svg>
+);
 
-function KeyIcon({ className = "w-8 h-8" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4"/>
-    </svg>
-  );
-}
-
-function CloudIcon({ className = "w-8 h-8" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/>
-    </svg>
-  );
-}
-
-function TimerIcon({ className = "w-8 h-8" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-    </svg>
-  );
-}
-
-function UsersIcon({ className = "w-8 h-8" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-    </svg>
-  );
-}
-
-function CheckCircleIcon({ className = "w-8 h-8" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-    </svg>
-  );
-}
-
-function GlobeIcon({ className = "w-8 h-8" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-    </svg>
-  );
-}
-
-function ArrowRightIcon({ className = "w-5 h-5" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-    </svg>
-  );
-}
-
-function MenuIcon({ className = "w-6 h-6" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
-    </svg>
-  );
-}
-
-function CloseIcon({ className = "w-6 h-6" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-    </svg>
-  );
-}
-
-function ChevronDownIcon({ className = "w-5 h-5" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="6 9 12 15 18 9"/>
-    </svg>
-  );
-}
+const ChevronDownIcon = ({ className = "" }) => (
+  <svg className={`w-5 h-5 ${className}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter">
+    <path d="M6 9l6 6 6-6" />
+  </svg>
+);
 
 /* ──────────── DATA ──────────── */
-
 const FEATURES = [
   {
-    icon: <ShieldIcon />,
     title: "Anonymous Submission",
     sanskrit: "Gupt Darj",
     description: "No login. No IP logging. No identity. Just the truth, submitted in complete anonymity.",
+    icon: (
+      <svg className="w-8 h-8 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      </svg>
+    ),
     color: "bg-cyan",
   },
   {
-    icon: <LockIcon />,
     title: "AES 256 GCM Encryption",
     sanskrit: "Kavach Suraksha",
     description: "Military grade encryption happens entirely in your browser. Not a single byte of plaintext ever leaves your device.",
+    icon: (
+      <svg className="w-8 h-8 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </svg>
+    ),
     color: "bg-coral",
   },
   {
-    icon: <KeyIcon />,
     title: "Shamir Secret Sharing",
     sanskrit: "Kunji Vibhajan",
     description: "Your encryption key is split into multiple shards. No single guardian can unlock the evidence alone.",
+    icon: (
+      <svg className="w-8 h-8 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+        <path d="M21 2v6h-6M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+        <path d="M3 3v6h6" />
+      </svg>
+    ),
     color: "bg-golden",
   },
   {
-    icon: <CloudIcon />,
     title: "Permanent Storage",
-    sanskrit: "Nitya Bhhandaar",
+    sanskrit: "Nitya Bhandaar",
     description: "Evidence stored on IPFS and Arweave simultaneously. Deleted from one? It lives forever on the other.",
-    color: "bg-purple text-white",
+    icon: (
+      <svg className="w-8 h-8 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+        <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
+      </svg>
+    ),
+    color: "bg-indigo-400",
   },
   {
-    icon: <TimerIcon />,
     title: "Dead Man Switch",
     sanskrit: "Antim Sanket",
     description: "Miss your check in and the switch triggers automatically. Chainlink Automation ensures no one can stop it.",
+    icon: (
+      <svg className="w-8 h-8 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 6v6l4 2" />
+      </svg>
+    ),
     color: "bg-coral",
   },
   {
-    icon: <UsersIcon />,
     title: "Guardian Network",
     sanskrit: "Yamadoot Mandal",
     description: "Trusted wallets hold key shards. When the switch fires, guardians assemble to unlock the truth.",
+    icon: (
+      <svg className="w-8 h-8 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
     color: "bg-cyan",
   },
   {
-    icon: <CheckCircleIcon />,
     title: "On Chain Verification",
-    sanskrit: "Satyanisht Praramaan",
+    sanskrit: "Satyanisht Pramaan",
     description: "SHA 256 hash stored on the blockchain at the moment of submission. Tamper proof. Court admissible.",
+    icon: (
+      <svg className="w-8 h-8 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+        <path d="m9 11 3 3L22 4" />
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+      </svg>
+    ),
     color: "bg-golden",
   },
   {
-    icon: <GlobeIcon />,
     title: "Public Release",
     sanskrit: "Satya Prakash",
     description: "Once enough shards are submitted, the evidence is reconstructed and published to an uncensorable public URL.",
-    color: "bg-purple text-white",
+    icon: (
+      <svg className="w-8 h-8 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+        <path d="M2 12h20" />
+      </svg>
+    ),
+    color: "bg-indigo-400",
   },
 ];
 
 const STEPS = [
-  {
-    number: "01",
-    title: "Upload Evidence",
-    sanskrit: "Saakshya Uplabdh Karein",
-    description: "Select your files. They never leave your browser unencrypted.",
-  },
-  {
-    number: "02",
-    title: "Encrypt Locally",
-    sanskrit: "Sthaniya Suraksha",
-    description: "AES 256 GCM encrypts everything client side. The key exists only in your memory.",
-  },
-  {
-    number: "03",
-    title: "Shard the Key",
-    sanskrit: "Kunji Vibhaajan",
-    description: "Shamir splits the key into N shards. Each guardian receives one shard.",
-  },
-  {
-    number: "04",
-    title: "Store Permanently",
-    sanskrit: "Sthaayi Bhhandaaran",
-    description: "Encrypted blob goes to IPFS and Arweave. CIDs recorded on chain.",
-  },
-  {
-    number: "05",
-    title: "Set the Switch",
-    sanskrit: "Antim Sanket Sthaapit",
-    description: "Configure your check in interval. Miss it and the dead man switch fires.",
-  },
-  {
-    number: "06",
-    title: "Truth Released",
-    sanskrit: "Satya Prakash",
-    description: "Guardians submit shards. Evidence is reconstructed and published permanently.",
-  },
+  { number: "01", title: "Select Evidence", sanskrit: "Saakshya Chayan", description: "Select the files you wish to protect. Max 50MB per vault for optimal IPFS distribution." },
+  { number: "02", title: "Client Side Encryption", sanskrit: "Kavach Nirman", description: "Your browser generates an AES-256-GCM key and encrypts the files locally. Plaintext never leaves your RAM." },
+  { number: "03", title: "Key Sharding", sanskrit: "Kunji Vibhajan", description: "The AES key is cryptographically split using Shamir's Secret Sharing. You define the threshold (e.g., 3-of-5)." },
+  { number: "04", title: "Smart Contract Creation", sanskrit: "Lekhaa Sthapana", description: "A record is created on the Polygon blockchain containing the encrypted CID and the list of Guardian addresses." },
+  { number: "05", title: "Periodic Check In", sanskrit: "Jeevan Sanket", description: "You must return to the platform to ping the smart contract before your configured interval expires." },
+  { number: "06", title: "Automatic Release", sanskrit: "Satya Prakash", description: "If you fail to check in, Chainlink triggers the dead man switch. Guardians submit their shards to decrypt the vault." },
 ];
 
 const TERMS = [
-  { english: "Vault / Record", sanskrit: "Lekhaa", devanagari: "लेखा" },
-  { english: "Guardian", sanskrit: "Yamadoot", devanagari: "यमदूत" },
   { english: "Evidence", sanskrit: "Saakshya", devanagari: "साक्ष्य" },
-  { english: "Release", sanskrit: "Prakash", devanagari: "प्रकाश" },
-  { english: "Dead Man Switch", sanskrit: "Antim Sanket", devanagari: "अंतिम संकेत" },
+  { english: "Dead Man's Switch", sanskrit: "Antim Sanket", devanagari: "अंतिम संकेत" },
+  { english: "Guardian", sanskrit: "Yamadoot", devanagari: "यमदूत" },
+  { english: "Vault Record", sanskrit: "Lekhaa", devanagari: "लेखा" },
+  { english: "Decryption/Release", sanskrit: "Prakash", devanagari: "प्रकाश" },
   { english: "Whistleblower", sanskrit: "Satyavadi", devanagari: "सत्यवादी" },
 ];
+
+/* ──────────── CUSTOM LOADERS & EFFECTS ──────────── */
+
+const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$*&^%!अआइईउऊकखगघचछजझटठडढतथदधनपफबभम";
+
+// The Redacted / Scramble Reveal Effect
+function ScrambleText({ text, className = "", delayMs = 0 }: { text: string, className?: string, delayMs?: number }) {
+  const [displayText, setDisplayText] = useState("");
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const elementRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsIntersecting(true);
+        observer.disconnect();
+      }
+    }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+    if (elementRef.current) observer.observe(elementRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isIntersecting) return;
+
+    let timeout: NodeJS.Timeout;
+    let interval: NodeJS.Timeout;
+
+    timeout = setTimeout(() => {
+      let iteration = 0;
+      interval = setInterval(() => {
+        setDisplayText(
+          text
+            .split("")
+            .map((letter, index) => {
+              if (index < iteration) return text[index];
+              if (letter === " ") return " ";
+              return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+            })
+            .join("")
+        );
+
+        if (iteration >= text.length) {
+          clearInterval(interval);
+        }
+        iteration += text.length / 25; // Speed of unscramble
+      }, 30);
+    }, delayMs);
+
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
+  }, [text, isIntersecting, delayMs]);
+
+  // If not intersecting, show redacted blocks
+  return (
+    <span ref={elementRef} className={className}>
+      {displayText || text.replace(/[^\s]/g, '█')}
+    </span>
+  );
+}
+
+// Global Splash Screen Vault Loader
+function VaultSplashLoader({ onComplete }: { onComplete: () => void }) {
+  const [progress, setProgress] = useState(0);
+  const [phase, setPhase] = useState(0);
+  const [hashes, setHashes] = useState<string[]>([]);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    // Terminal background noise
+    const interval = setInterval(() => {
+       if (phase < 2) {
+          setHashes(Array(20).fill(0).map(() => 
+            Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+          ));
+       }
+    }, 70);
+
+    // Progress Simulation
+    let p = 0;
+    const pTimer = setInterval(() => {
+      p += Math.floor(Math.random() * 10) + 2; // Incremental chunks
+      if (p >= 100) {
+        p = 100;
+        clearInterval(pTimer);
+        setPhase(1); 
+        setTimeout(() => setPhase(2), 500); 
+        setTimeout(() => {
+          setVisible(false);
+          setTimeout(onComplete, 800); // Wait for CSS transform to finish
+        }, 1200);
+      }
+      setProgress(p);
+    }, 120);
+
+    return () => {
+      clearInterval(interval);
+      clearInterval(pTimer);
+    }
+  }, [phase, onComplete]);
+
+  if (!visible && phase === 2) return null;
+
+  return (
+    <div className={`fixed inset-0 z-[1000] bg-black text-golden flex flex-col items-center justify-center font-[var(--font-mono)] transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] ${!visible ? '-translate-y-full' : 'translate-y-0'}`}>
+      
+      {/* Background terminal noise */}
+      <div className="absolute inset-0 overflow-hidden opacity-10 text-[0.65rem] break-all leading-tight pointer-events-none p-4 select-none flex flex-wrap gap-1">
+         {hashes.map((h, i) => <span key={i} className={i % 3 === 0 ? "text-coral" : ""}>{h}</span>)}
+      </div>
+
+      <div className="relative z-10 w-full max-w-3xl px-6 flex flex-col gap-8">
+         <div className="flex justify-between items-end border-b-[4px] border-golden pb-3">
+            <h2 className="text-2xl sm:text-4xl font-bold uppercase tracking-widest text-white">Chitragupt Protocol</h2>
+            <span className="text-xl sm:text-3xl font-bold text-coral">{progress}%</span>
+         </div>
+         
+         {/* Brutal Progress Bar */}
+         <div className="w-full h-16 border-[4px] border-golden p-1.5 relative overflow-hidden bg-black shadow-[8px_8px_0px_#FFD93D]">
+            <div className="h-full bg-golden transition-all duration-75 ease-out shadow-[inset_-4px_0_0_#FF6B6B]" style={{ width: `${progress}%` }} />
+            {/* Glitch overlay on bar */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIi8+PC9zdmc+')] mix-blend-overlay pointer-events-none" />
+         </div>
+
+         <div className="flex flex-col gap-3 text-sm sm:text-base font-bold uppercase h-32">
+            {phase === 0 && <p className="animate-pulse text-white">&gt; Establishing secure connection via Tor network...</p>}
+            {phase === 0 && progress > 25 && <p className="animate-pulse text-cyan">&gt; Generating Shamir Secret variables...</p>}
+            {phase === 0 && progress > 55 && <p className="animate-pulse text-golden">&gt; Interfacing with Polygon Amoy Testnet...</p>}
+            {phase === 0 && progress > 80 && <p className="animate-pulse text-white">&gt; Verifying cryptographic signatures...</p>}
+            {phase >= 1 && <p className="text-coral">&gt; Handshake complete. Decrypting main vault interface.</p>}
+            {phase === 2 && <p className="text-golden text-2xl mt-4 animate-pulse-ring w-fit px-4 py-2 border-2 border-golden">&gt; ACCESS GRANTED_</p>}
+         </div>
+      </div>
+    </div>
+  );
+}
 
 /* ──────────── HOOKS ──────────── */
 
@@ -306,7 +382,7 @@ function Navbar() {
   );
 }
 
-function HeroSection() {
+function HeroSection({ loaded }: { loaded: boolean }) {
   return (
     <section id="hero" className="relative py-16 md:py-24 lg:py-32 overflow-hidden flex items-center justify-center min-h-[90vh]">
       {/* Decorative Elements */}
@@ -326,26 +402,28 @@ function HeroSection() {
           </div>
 
           {/* Main Headline */}
-          <h1 className="font-[var(--font-display)] text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight max-w-5xl hover-glitch">
-            Truth Cannot Be{" "}
+          <h1 className="font-[var(--font-display)] text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight max-w-5xl hover-glitch transition-all">
+            {loaded ? <ScrambleText text="Truth Cannot Be " delayMs={200} /> : "█████ ██████ ██ "}
             <span className="relative inline-block">
-              <span className="relative z-10">Deleted</span>
-              <span className="absolute bottom-1 left-0 w-full h-4 md:h-5 bg-coral/60 -z-0 transform -skew-x-12" />
+              <span className="relative z-10">
+                 {loaded ? <ScrambleText text="Deleted" delayMs={600} /> : "███████"}
+              </span>
+              <span className={`absolute bottom-1 left-0 w-full h-4 md:h-5 bg-coral/60 -z-0 transform -skew-x-12 transition-all duration-1000 ${loaded ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'}`} />
             </span>
           </h1>
 
           {/* Sanskrit Subline */}
           <p className="mt-8 font-[var(--font-mono)] text-lg md:text-xl text-charcoal/80 max-w-2xl bg-white px-4 py-2 border-2 border-black inline-block transform rotate-1 shadow-[2px_2px_0px_#1A1A1A]">
-            सत्यम् एव जयते &mdash; Truth alone triumphs
+            {loaded ? <ScrambleText text="सत्यम् एव जयते — Truth alone triumphs" delayMs={1000} /> : "██████████████████████████████"}
           </p>
 
           {/* Description */}
-          <p className="mt-8 text-base md:text-lg text-gray max-w-2xl leading-relaxed font-semibold">
-            Upload encrypted evidence that gets sharded across a guardian network and stored permanently on chain. If you go silent, the dead man switch ensures your truth is released automatically.
+          <p className="mt-8 text-base md:text-lg text-gray max-w-2xl leading-relaxed font-semibold min-h-[80px]">
+            {loaded && <ScrambleText text="Upload encrypted evidence that gets sharded across a guardian network and stored permanently on chain. If you go silent, the dead man switch ensures your truth is released automatically." delayMs={1400} />}
           </p>
 
           {/* CTA Buttons */}
-          <div className="mt-12 flex flex-col sm:flex-row items-center gap-6">
+          <div className={`mt-12 flex flex-col sm:flex-row items-center gap-6 transition-all duration-1000 transform ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <a href="#submit" className="brutal-btn brutal-btn-dark text-base py-4 px-8 group">
               Submit Evidence
               <ArrowRightIcon className="group-hover:translate-x-1 transition-transform" />
@@ -357,7 +435,7 @@ function HeroSection() {
           </div>
 
           {/* Stats Bar */}
-          <div className="mt-20 w-full max-w-4xl brutal-card px-4 py-6 sm:px-8 sm:py-8 bg-white hover:bg-ivory transition-colors">
+          <div className={`mt-20 w-full max-w-4xl brutal-card px-4 py-6 sm:px-8 sm:py-8 bg-white hover:bg-ivory transition-all duration-1000 transform delay-700 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x-[3px] md:divide-black">
               {[
                 { value: "AES 256", label: "Encryption" },
@@ -390,10 +468,11 @@ function FeaturesSection() {
         <div className="text-center mb-20 reveal-on-scroll">
           <div className="brutal-badge bg-cyan inline-flex mb-6 transform -rotate-2 hover:rotate-0 transition-transform">Core Features</div>
           <h2 className="font-[var(--font-display)] text-5xl md:text-6xl font-bold">
-            Built for the <span className="text-coral underline decoration-black decoration-4 underline-offset-8">Fearless</span>
+            <ScrambleText text="Built for the " />
+            <span className="text-coral underline decoration-black decoration-4 underline-offset-8">Fearless</span>
           </h2>
           <p className="mt-6 text-gray max-w-2xl mx-auto text-xl font-medium">
-            Every component is designed so that no government, corporation, or adversary can stop the truth from surfacing.
+            <ScrambleText text="Every component is designed so that no government, corporation, or adversary can stop the truth from surfacing." delayMs={200} />
           </p>
         </div>
 
@@ -408,12 +487,12 @@ function FeaturesSection() {
 
               {/* Title */}
               <h3 className="font-[var(--font-display)] text-xl font-bold leading-tight group-hover:text-coral transition-colors">
-                {feature.title}
+                <ScrambleText text={feature.title} />
               </h3>
 
               {/* Sanskrit */}
               <span className="font-[var(--font-mono)] text-sm font-bold text-charcoal uppercase tracking-widest px-2 py-1 bg-golden/20 inline-block w-fit border border-black/10">
-                {feature.sanskrit}
+                <ScrambleText text={feature.sanskrit} delayMs={100} />
               </span>
 
               {/* Description */}
@@ -436,10 +515,10 @@ function HowItWorksSection() {
         <div className="text-center mb-20 reveal-on-scroll">
           <div className="brutal-badge bg-golden inline-flex mb-6 transform rotate-2 hover:-rotate-0 transition-transform">Process</div>
           <h2 className="font-[var(--font-display)] text-5xl md:text-6xl font-bold">
-            How It Works
+            <ScrambleText text="How It Works" />
           </h2>
           <p className="mt-6 text-gray max-w-2xl mx-auto text-xl font-medium">
-            Six steps from raw evidence to permanent, uncensorable publication.
+            <ScrambleText text="Six steps from raw evidence to permanent, uncensorable publication." delayMs={200} />
           </p>
         </div>
 
@@ -455,10 +534,10 @@ function HowItWorksSection() {
               {/* Content */}
               <div className="flex flex-col gap-3 flex-1">
                 <h3 className="font-[var(--font-display)] text-xl font-bold">
-                  {step.title}
+                  <ScrambleText text={step.title} />
                 </h3>
                 <span className="font-[var(--font-mono)] text-xs font-bold text-charcoal uppercase tracking-widest bg-cyan/20 px-2 py-1 w-fit border border-black/10">
-                  {step.sanskrit}
+                  <ScrambleText text={step.sanskrit} delayMs={100} />
                 </span>
                 <p className="text-base text-gray font-medium leading-relaxed mt-1">
                   {step.description}
@@ -480,10 +559,10 @@ function TerminologySection() {
         <div className="text-center mb-20 reveal-on-scroll">
           <div className="brutal-badge bg-coral text-white inline-flex mb-6 transform -rotate-1 hover:rotate-0 transition-transform">Shabd Kosh</div>
           <h2 className="font-[var(--font-display)] text-5xl md:text-6xl font-bold">
-            The Language of Truth
+            <ScrambleText text="The Language of Truth" />
           </h2>
           <p className="mt-6 text-gray max-w-2xl mx-auto text-xl font-medium">
-            Chitragupt speaks in the timeless vocabulary of Sanskrit, the language of cosmic record keeping.
+             <ScrambleText text="Chitragupt speaks in the timeless vocabulary of Sanskrit, the language of cosmic record keeping." delayMs={200} />
           </p>
         </div>
 
@@ -493,11 +572,11 @@ function TerminologySection() {
             <div key={i} className="reveal-on-scroll brutal-card p-8 flex flex-col items-center text-center gap-4 group cursor-default hover:bg-ivory" style={{ transitionDelay: `${i * 50}ms` }}>
               {/* Devanagari */}
               <span className="text-5xl font-bold text-black opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
-                {term.devanagari}
+                <ScrambleText text={term.devanagari} />
               </span>
               {/* Sanskrit */}
               <span className="font-[var(--font-mono)] text-lg font-bold text-coral uppercase tracking-widest mt-2">
-                {term.sanskrit}
+                <ScrambleText text={term.sanskrit} delayMs={100} />
               </span>
               {/* English */}
               <span className="text-base font-semibold text-gray">
@@ -540,9 +619,11 @@ function CTASection() {
 
           <div className="relative z-10">
             <h2 className="font-[var(--font-display)] text-4xl md:text-6xl font-bold max-w-4xl mx-auto leading-tight hover-glitch">
-              The World Needs to Know.
+              <ScrambleText text="The World Needs to Know." />
               <br />
-              <span className="text-coral underline decoration-black decoration-4 underline-offset-8">You Have the Proof.</span>
+              <span className="text-coral underline decoration-black decoration-4 underline-offset-8">
+                <ScrambleText text="You Have the Proof." delayMs={300} />
+              </span>
             </h2>
 
             <p className="mt-8 text-charcoal font-semibold max-w-2xl mx-auto text-xl leading-relaxed bg-white/80 p-4 border-2 border-black inline-block transform rotate-1 shadow-[4px_4px_0px_rgba(0,0,0,0.1)]">
@@ -632,6 +713,7 @@ function Footer() {
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+  const [appLoaded, setAppLoaded] = useState(false);
   useScrollReveal();
 
   useEffect(() => {
@@ -641,18 +723,22 @@ export default function Home() {
   if (!mounted) return null;
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-1 overflow-hidden">
-        <HeroSection />
-        <MarqueeStrip />
-        <FeaturesSection />
-        <HowItWorksSection />
-        <TerminologySection />
-        <MarqueeStrip />
-        <CTASection />
-      </main>
-      <Footer />
-    </div>
+    <>
+      <VaultSplashLoader onComplete={() => setAppLoaded(true)} />
+      
+      <div className={`flex flex-col min-h-screen transition-opacity duration-1000 ${appLoaded ? 'opacity-100' : 'opacity-0 h-screen overflow-hidden'}`}>
+        <Navbar />
+        <main className="flex-1 overflow-hidden">
+          <HeroSection loaded={appLoaded} />
+          <MarqueeStrip />
+          <FeaturesSection />
+          <HowItWorksSection />
+          <TerminologySection />
+          <MarqueeStrip />
+          <CTASection />
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 }
