@@ -1,0 +1,299 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+@import "tailwindcss";
+
+/* ========================================
+   CHITRAGUPT NEO BRUTALISM DESIGN SYSTEM
+   ======================================== */
+
+@theme inline {
+  /* ---- Core Palette ---- */
+  --color-golden: #FFD93D;
+  --color-golden-light: #FFEA80;
+  --color-golden-dark: #E6C235;
+  --color-ivory: #FFF8E7;
+  --color-white: #FFFFFF;
+  --color-black: #1A1A1A;
+  --color-charcoal: #2D2D2D;
+  --color-gray: #6B6B6B;
+  --color-gray-light: #E5E5E5;
+
+  /* ---- Accent Colors ---- */
+  --color-cyan: #4ECDC4;
+  --color-cyan-light: #A8E6CF;
+  --color-coral: #FF6B6B;
+  --color-coral-light: #FF9B9B;
+  --color-green: #2D6A4F;
+  --color-green-light: #52B788;
+  --color-purple: #7B68EE;
+  --color-saffron: #FF6B00;
+
+  /* ---- Semantic Colors ---- */
+  --color-background: #FFD93D;
+  --color-foreground: #1A1A1A;
+  --color-card: #FFFFFF;
+  --color-card-hover: #FFF8E7;
+  --color-border: #1A1A1A;
+  --color-muted: #6B6B6B;
+
+  /* ---- Typography ---- */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --font-body: 'Space Grotesk', sans-serif;
+
+  /* ---- Neo Brutalist Shadows ---- */
+  --shadow-brutal-sm: 3px 3px 0px #1A1A1A;
+  --shadow-brutal: 5px 5px 0px #1A1A1A;
+  --shadow-brutal-lg: 8px 8px 0px #1A1A1A;
+  --shadow-brutal-xl: 12px 12px 0px #1A1A1A;
+  --shadow-brutal-hover: 2px 2px 0px #1A1A1A;
+  --shadow-brutal-yellow: 5px 5px 0px #E6C235;
+
+  /* ---- Border Widths ---- */
+  --border-brutal: 3px;
+  --border-brutal-thick: 4px;
+
+  /* ---- Spacing ---- */
+  --radius-brutal: 4px;
+  --radius-brutal-md: 8px;
+}
+
+/* ---- Reset & Base ---- */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ---- Dot Pattern Background ---- */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle, #c9a82c 1px, transparent 1px);
+  background-size: 18px 18px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Selection ---- */
+::selection {
+  background: var(--color-golden);
+  color: var(--color-black);
+}
+
+/* ---- Scrollbar Brutalism ---- */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-golden);
+  border-left: 3px solid var(--color-black);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-black);
+  border: 2px solid var(--color-golden);
+}
+
+/* ========================================
+   NEO BRUTAL COMPONENT CLASSES
+   ======================================== */
+
+/* Brutal Card */
+.brutal-card {
+  background: var(--color-card);
+  border: var(--border-brutal) solid var(--color-border);
+  box-shadow: var(--shadow-brutal);
+  border-radius: var(--radius-brutal-md);
+  transition: all 0.15s ease;
+}
+
+.brutal-card:hover {
+  box-shadow: var(--shadow-brutal-hover);
+  transform: translate(3px, 3px);
+}
+
+/* Brutal Button */
+.brutal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  border: var(--border-brutal) solid var(--color-border);
+  box-shadow: var(--shadow-brutal);
+  border-radius: var(--radius-brutal);
+  cursor: pointer;
+  transition: all 0.1s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.brutal-btn:hover {
+  box-shadow: var(--shadow-brutal-hover);
+  transform: translate(3px, 3px);
+}
+
+.brutal-btn:active {
+  box-shadow: none;
+  transform: translate(5px, 5px);
+}
+
+.brutal-btn-primary {
+  background: var(--color-golden);
+  color: var(--color-black);
+}
+
+.brutal-btn-dark {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.brutal-btn-white {
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+.brutal-btn-coral {
+  background: var(--color-coral);
+  color: var(--color-white);
+}
+
+/* Brutal Badge */
+.brutal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.75rem;
+  border: 2px solid var(--color-border);
+  box-shadow: 2px 2px 0px var(--color-border);
+  border-radius: var(--radius-brutal);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ---- Geometric Decorations ---- */
+.deco-cross {
+  position: relative;
+}
+
+.deco-cross::before,
+.deco-cross::after {
+  content: '+';
+  position: absolute;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-coral);
+  opacity: 0.6;
+}
+
+.deco-cross::before {
+  top: -12px;
+  right: -12px;
+}
+
+.deco-cross::after {
+  bottom: -12px;
+  left: -12px;
+}
+
+/* Animated underline for links */
+.brutal-link {
+  position: relative;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.brutal-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: var(--color-black);
+  transition: width 0.2s ease;
+}
+
+.brutal-link:hover::after {
+  width: 100%;
+}
+
+/* Step number circle */
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1.5rem;
+  border: var(--border-brutal) solid var(--color-border);
+  box-shadow: var(--shadow-brutal-sm);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Decorative dot grid */
+.dot-grid {
+  background-image: radial-gradient(circle, var(--color-black) 1.5px, transparent 1.5px);
+  background-size: 12px 12px;
+  opacity: 0.15;
+}
+
+/* Marquee animation */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+
+/* Float animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Pulse ring animation */
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s ease-out infinite;
+}
