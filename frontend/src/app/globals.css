@@ -80,13 +80,14 @@ body::before {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: radial-gradient(circle, #c9a82c 1px, transparent 1px);
-  background-size: 18px 18px;
+  width: 200%;
+  height: 200%;
+  background-image: radial-gradient(circle, #c9a82c 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
   pointer-events: none;
   z-index: 0;
   opacity: 0.4;
+  animation: bg-pan 40s linear infinite;
 }
 
 body > * {
@@ -96,13 +97,13 @@ body > * {
 
 /* ---- Selection ---- */
 ::selection {
-  background: var(--color-golden);
-  color: var(--color-black);
+  background: var(--color-charcoal);
+  color: var(--color-white);
 }
 
 /* ---- Scrollbar Brutalism ---- */
 ::-webkit-scrollbar {
-  width: 12px;
+  width: 14px;
 }
 
 ::-webkit-scrollbar-track {
@@ -112,7 +113,7 @@ body > * {
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-black);
-  border: 2px solid var(--color-golden);
+  border: 3px solid var(--color-golden);
 }
 
 /* ========================================
@@ -125,12 +126,17 @@ body > * {
   border: var(--border-brutal) solid var(--color-border);
   box-shadow: var(--shadow-brutal);
   border-radius: var(--radius-brutal-md);
-  transition: all 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, box-shadow;
 }
 
 .brutal-card:hover {
   box-shadow: var(--shadow-brutal-hover);
-  transform: translate(3px, 3px);
+  transform: translate(3px, 3px) rotate(-1deg);
+}
+
+.brutal-card.tilt-right:hover {
+  transform: translate(3px, 3px) rotate(1deg);
 }
 
 /* Brutal Button */
@@ -147,19 +153,37 @@ body > * {
   box-shadow: var(--shadow-brutal);
   border-radius: var(--radius-brutal);
   cursor: pointer;
-  transition: all 0.1s ease;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.brutal-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: skewX(-15deg);
+  transition: left 0.3s ease;
+}
+
+.brutal-btn:hover::after {
+  left: 100%;
 }
 
 .brutal-btn:hover {
   box-shadow: var(--shadow-brutal-hover);
-  transform: translate(3px, 3px);
+  transform: translate(3px, 3px) scale(0.98);
 }
 
 .brutal-btn:active {
   box-shadow: none;
-  transform: translate(5px, 5px);
+  transform: translate(5px, 5px) scale(0.95);
 }
 
 .brutal-btn-primary {
@@ -238,7 +262,7 @@ body > * {
   width: 0;
   height: 3px;
   background: var(--color-black);
-  transition: width 0.2s ease;
+  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .brutal-link:hover::after {
@@ -259,16 +283,28 @@ body > * {
   box-shadow: var(--shadow-brutal-sm);
   border-radius: 50%;
   flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.brutal-card:hover .step-number {
+  transform: rotate(15deg) scale(1.1);
+  background: var(--color-coral);
+  color: var(--color-white);
 }
 
 /* Decorative dot grid */
 .dot-grid {
-  background-image: radial-gradient(circle, var(--color-black) 1.5px, transparent 1.5px);
-  background-size: 12px 12px;
+  background-image: radial-gradient(circle, var(--color-black) 2px, transparent 2px);
+  background-size: 16px 16px;
   opacity: 0.15;
 }
 
-/* Marquee animation */
+/* ---- Animations ---- */
+@keyframes bg-pan {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-50px, -50px); }
+}
+
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -278,22 +314,44 @@ body > * {
   animation: marquee 20s linear infinite;
 }
 
-/* Float animation */
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(5deg); }
 }
 
 .animate-float {
-  animation: float 3s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
 }
 
-/* Pulse ring animation */
+@keyframes spin-slow {
+  100% { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+@keyframes fade-in-up {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up {
+  opacity: 0; /* JS will trigger this */
+  animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @keyframes pulse-ring {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(1.4); opacity: 0; }
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(2); opacity: 0; }
 }
 
 .animate-pulse-ring {
-  animation: pulse-ring 2s ease-out infinite;
+  animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+/* Sub-card hover state inner elements */
+.group:hover .icon-box {
+  transform: scale(1.1) rotate(-5deg);
+  box-shadow: 2px 2px 0px #1A1A1A;
 }
