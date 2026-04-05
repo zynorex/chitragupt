@@ -215,6 +215,7 @@ function VaultSplashLoader({ onComplete }: { onComplete: () => void }) {
   const [phase, setPhase] = useState(0);
   const [hashes, setHashes] = useState<string[]>([]);
   const [visible, setVisible] = useState(true);
+  const [unmount, setUnmount] = useState(false);
 
   useEffect(() => {
     // Terminal background noise
@@ -236,8 +237,11 @@ function VaultSplashLoader({ onComplete }: { onComplete: () => void }) {
         setPhase(1); 
         setTimeout(() => setPhase(2), 500); 
         setTimeout(() => {
-          setVisible(false);
-          setTimeout(onComplete, 800); // Wait for CSS transform to finish
+          setVisible(false); // Triggers slide up
+          setTimeout(() => {
+            setUnmount(true);
+            onComplete();
+          }, 800); // Wait for CSS transform to finish
         }, 1200);
       }
       setProgress(p);
@@ -249,7 +253,7 @@ function VaultSplashLoader({ onComplete }: { onComplete: () => void }) {
     }
   }, [phase, onComplete]);
 
-  if (!visible && phase === 2) return null;
+  if (unmount) return null;
 
   return (
     <div className={`fixed inset-0 z-[1000] bg-black text-golden flex flex-col items-center justify-center font-[var(--font-mono)] transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] ${!visible ? '-translate-y-full' : 'translate-y-0'}`}>
@@ -726,7 +730,7 @@ export default function Home() {
     <>
       <VaultSplashLoader onComplete={() => setAppLoaded(true)} />
       
-      <div className={`flex flex-col min-h-screen transition-opacity duration-1000 ${appLoaded ? 'opacity-100' : 'opacity-0 h-screen overflow-hidden'}`}>
+      <div className={`flex flex-col min-h-screen transition-opacity duration-1000 ${appLoaded ? 'opacity-100' : 'opacity-0'}`}>
         <Navbar />
         <main className="flex-1 overflow-hidden">
           <HeroSection loaded={appLoaded} />
