@@ -82,6 +82,14 @@ export default function Navbar() {
               <span className="absolute bottom-1 left-3 right-3 h-[3px] bg-black transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300 ease-out" />
             </Link>
 
+            <Link
+              href="/shabd-kosh"
+              className="relative px-3 py-2 text-sm font-bold font-[var(--font-mono)] text-charcoal tracking-wide group overflow-hidden inline-flex items-center justify-center mx-1"
+            >
+              <span className="relative z-10 group-hover:text-black transition-colors">SHABD KOSH</span>
+              <span className="absolute bottom-1 left-3 right-3 h-[3px] bg-black transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300 ease-out" />
+            </Link>
+
             {/* Portals Dropdown */}
             <div 
               className="relative"
@@ -173,10 +181,10 @@ export default function Navbar() {
         >
           <div className="p-5 flex flex-col gap-3">
              <div className="text-[0.6rem] font-[var(--font-mono)] text-gray uppercase tracking-widest font-bold mb-1">General</div>
-            {["FEATURES", "ABOUT"].map((item) => (
+            {["FEATURES", "ABOUT", "SHABD KOSH"].map((item) => (
               <Link
                 key={item}
-                href={item === "ABOUT" ? "/about" : `/#${item.toLowerCase().replace(/ /g, "-")}`}
+                href={item === "ABOUT" ? "/about" : item === "SHABD KOSH" ? "/shabd-kosh" : `/#${item.toLowerCase().replace(/ /g, "-")}`}
                 onClick={() => setMobileOpen(false)}
                 className="block px-4 py-3 text-base font-bold font-[var(--font-mono)] text-black tracking-widest border-[3px] border-transparent hover:border-black hover:bg-golden hover:translate-x-2 transition-all uppercase"
               >
