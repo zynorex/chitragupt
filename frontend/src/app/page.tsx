@@ -136,63 +136,31 @@ const TERMS = [
 
 /* ──────────── CUSTOM LOADERS & EFFECTS ──────────── */
 
-const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$*&^%!अआइईउऊकखगघचछजझटठडढतथदधनपफबभम";
-
-// The Redacted / Scramble Reveal Effect
+// The Smooth Cinematic Reveal Effect
 function ScrambleText({ text, className = "", delayMs = 0 }: { text: string, className?: string, delayMs?: number }) {
-  const [displayText, setDisplayText] = useState("");
   const [isIntersecting, setIsIntersecting] = useState(false);
   const elementRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        setIsIntersecting(true);
+        setTimeout(() => {
+          setIsIntersecting(true);
+        }, delayMs);
         observer.disconnect();
       }
     }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
     if (elementRef.current) observer.observe(elementRef.current);
     return () => observer.disconnect();
-  }, []);
+  }, [delayMs]);
 
-  useEffect(() => {
-    if (!isIntersecting) return;
-
-    let timeout: NodeJS.Timeout;
-    let interval: NodeJS.Timeout;
-
-    timeout = setTimeout(() => {
-      let iteration = 0;
-      interval = setInterval(() => {
-        setDisplayText(
-          text
-            .split("")
-            .map((letter, index) => {
-              if (index < iteration) return text[index];
-              if (letter === " ") return " ";
-              return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
-            })
-            .join("")
-        );
-
-        if (iteration >= text.length) {
-          clearInterval(interval);
-        }
-        iteration += text.length / 25; // Speed of unscramble
-      }, 30);
-    }, delayMs);
-
-    return () => {
-      clearTimeout(timeout);
-      clearInterval(interval);
-    };
-  }, [text, isIntersecting, delayMs]);
-
-  // If not intersecting, show redacted blocks
   return (
-    <span ref={elementRef} className={className}>
-      {displayText || text.replace(/[^\s]/g, '█')}
+    <span 
+      ref={elementRef} 
+      className={`transition-all duration-[1200ms] ease-[cubic-bezier(0.25,1,0.5,1)] inline-block ${isIntersecting ? 'opacity-100 blur-none translate-y-0' : 'opacity-0 blur-md translate-y-1'} ${className}`}
+    >
+      {text}
     </span>
   );
 }
