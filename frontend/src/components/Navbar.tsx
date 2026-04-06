@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 /* ──────────── ICONS ──────────── */
 const MenuIcon = () => (
@@ -16,9 +17,24 @@ const CloseIcon = () => (
   </svg>
 );
 
+const ChevronDownIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter" className="ml-1 transition-transform duration-200">
+    <path d="M6 9l6 6 6-6" />
+  </svg>
+);
+
+const PORTALS = [
+  { name: "SUBMIT EVIDENCE", href: "/submit", desc: "Upload and shard files" },
+  { name: "DASHBOARD", href: "/dashboard", desc: "Whistleblower portal" },
+  { name: "YAMADOOT PANEL", href: "/guardian", desc: "Guardian operations" },
+  { name: "VERIFICATION", href: "/verify", desc: "Hash verification tool" },
+];
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -27,7 +43,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className={`fixed z-[100] w-full transition-all duration-300 ${scrolled ? 'top-2 sm:top-4' : 'top-4 sm:top-8'}`}>
+    <nav className={`fixed w-full transition-all duration-300 ${scrolled ? 'top-2 sm:top-4' : 'top-4 sm:top-8'}`} style={{ zIndex: 9999 }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`
           relative flex items-center justify-between h-16 sm:h-20 px-4 sm:px-6 
@@ -40,7 +56,6 @@ export default function Navbar() {
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-coral border-[3px] border-black shadow-[2px_2px_0px_#1A1A1A] flex items-center justify-center group-hover:bg-golden transition-colors group-hover:translate-x-[2px] group-hover:translate-y-[2px] group-hover:shadow-none ease-out">
                 <span className="font-[var(--font-mono)] font-bold text-xl sm:text-2xl text-white group-hover:text-black">C</span>
               </div>
-              {/* Decoration cross */}
               <div className="absolute -top-2 -left-2 text-black/20 text-xs font-[var(--font-mono)] font-bold opacity-0 group-hover:opacity-100 transition-opacity">+</div>
             </Link>
             <div className="hidden sm:flex flex-col">
@@ -50,18 +65,70 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Links (Center) */}
-          <div className="hidden lg:flex items-center gap-1">
-            {["FEATURES", "ABOUT", "SHABD KOSH"].map((item) => (
-              <Link
-                key={item}
-                href={item === "ABOUT" ? "/about" : `/#${item.toLowerCase().replace(/ /g, "-")}`}
-                className="relative px-3 py-2 text-sm font-bold font-[var(--font-mono)] text-charcoal tracking-wide group overflow-hidden inline-flex items-center justify-center mx-1"
+          <div className="hidden lg:flex items-center gap-2 relative">
+            <Link
+              href="/#features"
+              className="relative px-3 py-2 text-sm font-bold font-[var(--font-mono)] text-charcoal tracking-wide group overflow-hidden inline-flex items-center justify-center mx-1"
+            >
+              <span className="relative z-10 group-hover:text-black transition-colors">FEATURES</span>
+              <span className="absolute bottom-1 left-3 right-3 h-[3px] bg-black transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300 ease-out" />
+            </Link>
+
+            <Link
+              href="/about"
+              className="relative px-3 py-2 text-sm font-bold font-[var(--font-mono)] text-charcoal tracking-wide group overflow-hidden inline-flex items-center justify-center mx-1"
+            >
+              <span className="relative z-10 group-hover:text-black transition-colors">ABOUT</span>
+              <span className="absolute bottom-1 left-3 right-3 h-[3px] bg-black transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300 ease-out" />
+            </Link>
+
+            {/* Portals Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setDropdownOpen(true)}
+              onMouseLeave={() => setDropdownOpen(false)}
+            >
+              <button className={`
+                flex items-center px-4 py-2 text-sm font-bold font-[var(--font-mono)] tracking-wide border-2 border-transparent transition-all
+                ${dropdownOpen || pathname !== '/' && pathname !== '/about' ? 'bg-ivory border-black text-black' : 'text-charcoal hover:bg-gray-light'}
+              `}>
+                PORTALS
+                <span className={`transform transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}>
+                  <ChevronDownIcon />
+                </span>
+              </button>
+
+              {/* Dropdown Menu Elements */}
+              <div 
+                className={`
+                  absolute top-full left-0 pt-2 w-64
+                  transition-all duration-200 origin-top-left
+                  ${dropdownOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}
+                `}
+                style={{ zIndex: 10000 }}
               >
-                <span className="relative z-10 group-hover:text-black transition-colors">{item}</span>
-                <span className="absolute bottom-1 left-3 right-3 h-[3px] bg-black transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300 ease-out" />
-                <span className="absolute inset-0 bg-golden/20 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 -z-0 rounded-[2px]" />
-              </Link>
-            ))}
+                <div className="flex flex-col bg-white border-[3px] border-black shadow-[4px_4px_0px_#1A1A1A]">
+                  {PORTALS.map((portal) => (
+                    <Link
+                      key={portal.name}
+                      href={portal.href}
+                      onClick={() => setDropdownOpen(false)}
+                      className={`
+                        p-3 border-b-[3px] border-black last:border-b-0 hover:bg-ivory group transition-colors block
+                        ${pathname === portal.href ? 'bg-golden hover:bg-golden' : ''}
+                      `}
+                    >
+                      <span className="font-[var(--font-mono)] text-sm font-bold text-black block mb-1 group-hover:text-coral transition-colors">
+                        &gt; {portal.name}
+                      </span>
+                      <span className="font-[var(--font-display)] text-xs text-gray font-semibold block uppercase">
+                        {portal.desc}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Right Section (Status + CTA) */}
@@ -96,14 +163,17 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Dropdown Panel */}
-        <div className={`
-          lg:hidden absolute top-full left-4 right-4 mt-3 border-[3px] border-black bg-ivory shadow-[6px_6px_0px_#1A1A1A]
-          transition-all duration-400 ease-[cubic-bezier(0.76,0,0.24,1)] origin-top overflow-hidden
-          ${mobileOpen ? 'max-h-[500px] opacity-100 scale-y-100 translate-y-0' : 'max-h-0 opacity-0 scale-y-0 -translate-y-4'}
-        `}>
+        <div 
+          className={`
+            lg:hidden absolute top-full left-4 right-4 mt-3 border-[3px] border-black bg-ivory shadow-[6px_6px_0px_#1A1A1A]
+            transition-all duration-400 ease-[cubic-bezier(0.76,0,0.24,1)] origin-top overflow-hidden
+            ${mobileOpen ? 'max-h-[800px] opacity-100 scale-y-100 translate-y-0' : 'max-h-0 opacity-0 scale-y-0 -translate-y-4'}
+          `}
+          style={{ zIndex: 10000 }}
+        >
           <div className="p-5 flex flex-col gap-3">
-             <div className="text-[0.6rem] font-[var(--font-mono)] text-gray uppercase tracking-widest font-bold mb-2">Navigation Log</div>
-            {["FEATURES", "ABOUT", "SHABD KOSH"].map((item) => (
+             <div className="text-[0.6rem] font-[var(--font-mono)] text-gray uppercase tracking-widest font-bold mb-1">General</div>
+            {["FEATURES", "ABOUT"].map((item) => (
               <Link
                 key={item}
                 href={item === "ABOUT" ? "/about" : `/#${item.toLowerCase().replace(/ /g, "-")}`}
@@ -113,18 +183,31 @@ export default function Navbar() {
                 <span className="text-coral mr-2">&gt;</span> {item}
               </Link>
             ))}
+            
+            <div className="text-[0.6rem] font-[var(--font-mono)] text-gray uppercase tracking-widest font-bold mt-2 mb-1">Portals</div>
+            {PORTALS.map((portal) => (
+              <Link
+                key={portal.name}
+                href={portal.href}
+                onClick={() => setMobileOpen(false)}
+                className="block px-4 py-3 text-sm font-bold font-[var(--font-mono)] text-black tracking-wider border-[3px] border-black bg-white hover:bg-coral hover:text-white transition-colors uppercase"
+              >
+                {portal.name}
+              </Link>
+            ))}
+
             <div className="border-t-[3px] border-black/20 pt-5 mt-2">
               <Link href="/submit" onClick={() => setMobileOpen(false)} className="brutal-btn brutal-btn-dark w-full flex justify-center items-center py-4 text-sm font-bold font-[var(--font-mono)] text-center">
-                SUBMIT EVIDENCE
+                OPEN VAULT
               </Link>
             </div>
             {/* Mobile Network Status */}
-            <div className="flex items-center gap-3 mt-4 px-2 py-2 bg-white border-2 border-black/10">
+            <div className="flex items-center gap-3 mt-2 px-2 py-2 bg-white border-2 border-black/10">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan"></span>
                 </span>
-                <span className="font-[var(--font-mono)] text-[0.65rem] font-bold text-gray uppercase tracking-wider">Polyon Amoy Active</span>
+                <span className="font-[var(--font-mono)] text-[0.65rem] font-bold text-gray uppercase tracking-wider">Polygon Amoy Active</span>
              </div>
           </div>
         </div>
