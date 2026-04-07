@@ -28,6 +28,7 @@ const PORTALS = [
   { name: "DASHBOARD", href: "/dashboard", desc: "Whistleblower portal" },
   { name: "YAMADOOT PANEL", href: "/guardian", desc: "Guardian operations" },
   { name: "VERIFICATION", href: "/verify", desc: "Hash verification tool" },
+  { name: "CRYPTO SANDBOX", href: "/cryptotest", desc: "Engine test module" },
 ];
 
 export default function Navbar() {
