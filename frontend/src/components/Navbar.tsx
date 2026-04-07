@@ -68,7 +68,7 @@ export default function Navbar() {
           {/* Desktop Links (Center) */}
           <div className="hidden lg:flex items-center gap-2 relative">
             <Link
-              href="/#features"
+              href="/features"
               className="relative px-3 py-2 text-sm font-bold font-[var(--font-mono)] text-charcoal tracking-wide group overflow-hidden inline-flex items-center justify-center mx-1"
             >
               <span className="relative z-10 group-hover:text-black transition-colors">FEATURES</span>
@@ -185,7 +185,7 @@ export default function Navbar() {
             {["FEATURES", "ABOUT", "SHABD KOSH"].map((item) => (
               <Link
                 key={item}
-                href={item === "ABOUT" ? "/about" : item === "SHABD KOSH" ? "/shabd-kosh" : `/#${item.toLowerCase().replace(/ /g, "-")}`}
+                href={item === "FEATURES" ? "/features" : item === "ABOUT" ? "/about" : "/shabd-kosh"}
                 onClick={() => setMobileOpen(false)}
                 className="block px-4 py-3 text-base font-bold font-[var(--font-mono)] text-black tracking-widest border-[3px] border-transparent hover:border-black hover:bg-golden hover:translate-x-2 transition-all uppercase"
               >
