@@ -44,7 +44,7 @@ export default function RootLayout({
         <div className="fixed inset-0 dot-grid pointer-events-none -z-10 bg-yellow-400" />
         
         <Navbar />
-        <main className="flex-1 flex flex-col pt-16 sm:pt-20">
+        <main className="flex-1 flex flex-col pt-24 sm:pt-28">
           {children}
         </main>
         <Footer />
